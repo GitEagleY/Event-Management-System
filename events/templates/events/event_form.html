@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Create/Update Event</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'events/styles.css' %}" />
+  </head>
+  <body
+    class="bg-gray-100 dark:bg-gray-800 flex items-center justify-center h-screen transition-colors"
+  >
+    <div
+      class="bg-white dark:bg-gray-900 p-6 rounded shadow-md w-full max-w-3xl flex"
+    >
+      <div class="w-full pr-4">
+        <h1 class="text-2xl mb-4 text-center">
+          {% if form.instance.pk %}Update{% else %}Create{% endif %} Event
+        </h1>
+        {% if form.errors %}
+        <div class="text-red-500 mb-4">
+          <ul>
+            {% for field in form %} {% for error in field.errors %}
+            <li>{{ field.label }}: {{ error }}</li>
+            {% endfor %} {% endfor %} {% for error in form.non_field_errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+        {% endif %}
+        <form method="post" enctype="multipart/form-data" class="w-full">
+          {% csrf_token %}
+          <div class="mb-4">
+            <label for="id_title" class="block text-lg">Title:</label>
+            {{ form.title }}
+          </div>
+          <div class="mb-4">
+            <label for="id_description" class="block text-lg"
+              >Description:</label
+            >
+            {{ form.description }}
+          </div>
+          <div class="mb-4">
+            <label for="id_date" class="block text-lg">Date:</label>
+            {{ form.date }}
+            <small class="text-gray-500">Format: YYYY-MM-DD HH:MM:SS</small>
+            <div id="date-warning" class="text-red-500 hidden">
+              Please enter a valid date format.
+            </div>
+          </div>
+          <div class="mb-4">
+            <label for="id_location" class="block text-lg">Location:</label>
+            {{ form.location }}
+          </div>
+          <div class="flex justify-between">
+            <button
+              type="submit"
+              id="submit-button"
+              class="bg-orange-500 text-white px-4 py-2 rounded"
+            >
+              Save
+            </button>
+            <a
+              href="{% url 'event_list' %}"
+              class="bg-orange-500 text-white px-4 py-2 rounded inline-block"
+              >Cancel</a
+            >
+          </div>
+        </form>
+        <script>
+          const dateInput = document.getElementById("id_date");
+          const submitButton = document.getElementById("submit-button");
+          const dateWarning = document.getElementById("date-warning");
+
+          dateInput.addEventListener("input", function () {
+            const dateValue = dateInput.value;
+
+            // Check if the date is valid
+            const isValidDate =
+              dateValue && !isNaN(new Date(dateValue).getTime());
+
+            // Show or hide the warning based on date validity
+            dateWarning.classList.toggle("hidden", isValidDate);
+          });
+        </script>
+      </div>
+    </div>
+  </body>
+</html>
